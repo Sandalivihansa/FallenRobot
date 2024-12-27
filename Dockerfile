@@ -1,10 +1,10 @@
-# Use Python 3.9 slim as base image
+# Use an official Python runtime as a parent image
 FROM python:3.10-slim
 
-# Set environment variable to avoid caching
-ENV PIP_NO_CACHE_DIR=1
+# Set the working directory in the container
+WORKDIR /root/FallenRobot
 
-# Install required system dependencies
+# Install system dependencies
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install --no-install-recommends -y \
     bash \
@@ -29,28 +29,32 @@ RUN apt-get update && apt-get upgrade -y && \
     libssl-dev \
     libgconf-2-4 \
     libxi6 \
-    libsqlite3-dev \
-    && rm -rf /var/lib/apt/lists/*
+    libsqlite3-dev && \
+    rm -rf /var/lib/apt/lists/*
 
-# Upgrade pip and install Python dependencies
-RUN pip3 install --upgrade pip setuptools wheel
-
-# Clone the repository
+# Clone the repository (if needed)
 RUN git clone https://github.com/Sandalivihansa/FallenRobot/
-# Set the working directory
+
+# Set the working directory for the project
 WORKDIR /root/FallenRobot
 
-# Copy config file
+# Upgrade pip and setuptools
+RUN pip3 install --upgrade pip setuptools wheel
+
+# Copy the requirements.txt file into the container
+COPY requirements.txt /root/FallenRobot/
+
+# Install Python dependencies from requirements.txt
+RUN pip3 install -U -r /root/FallenRobot/requirements.txt --no-cache-dir --verbose
+
+# Copy any additional configuration files (if applicable)
 COPY ./FallenRobot/config.py /root/FallenRobot/FallenRobot/
 
-# Install Python dependencies
-RUN pip3 install -U -r requirements.txt --no-cache-dir --verbose
+# Set environment variables (if needed, configure in Railway)
+# ENV VAR_NAME=value
 
-# Set the environment variables (configure in Railway)
-ENV PATH="/home/bot/bin:$PATH"
+# Expose necessary ports (if applicable)
+# EXPOSE 8080
 
-# Expose the necessary port if required
-EXPOSE 5000
-
-# Run the bot
-CMD ["python3", "-m", "FallenRobot"]
+# Command to run your application (update as needed)
+CMD ["python3", "your_app.py"]
