@@ -33,7 +33,7 @@ RUN apt-get update && apt-get upgrade -y && \
     rm -rf /var/lib/apt/lists/*
 
 # Clone the repository (if needed)
-RUN git clone https://github.com/Sandalivihansa/FallenRobot/
+RUN git clone https://github.com/Sandalivihansa/FallenRobot.git /root/FallenRobot
 
 # Set the working directory for the project
 WORKDIR /root/FallenRobot
@@ -47,14 +47,19 @@ COPY requirements.txt /root/FallenRobot/
 # Install Python dependencies from requirements.txt
 RUN pip3 install -U -r /root/FallenRobot/requirements.txt --no-cache-dir --verbose
 
-# Copy any additional configuration files (if applicable)
+# Copy the configuration file (if any) into the correct directory
 COPY ./FallenRobot/config.py /root/FallenRobot/FallenRobot/
 
-# Set environment variables (if needed, configure in Railway)
+# Ensure that the __main__.py file exists in your local repository
+# If not, add it to the repository
+# Example:
+# COPY ./FallenRobot/__main__.py /root/FallenRobot/FallenRobot/__main__.py
+
+# Set environment variables (if needed)
 # ENV VAR_NAME=value
 
 # Expose necessary ports (if applicable)
 # EXPOSE 8080
 
-# Command to run your application (update as needed)
+# Command to run your application (ensure it runs as a package with __main__.py)
 CMD ["python3", "-m", "FallenRobot"]
