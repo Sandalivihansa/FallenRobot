@@ -155,8 +155,9 @@ BOT_ID = bot_info.id
 BOT_NAME = bot_info.first_name
 BOT_USERNAME = bot_info.username
 
-# Initialize the Telegram bot
-updater = tg.Updater(TOKEN, workers=WORKERS, use_context=True)
+# Initialize the Telegram bot (use Application instead of Updater for version 20+)
+from telegram import Application
+updater = Application.builder().token(TOKEN).build()
 
 # Initialize Telethon client
 telethn = TelegramClient("Fallen", API_ID, API_HASH)
