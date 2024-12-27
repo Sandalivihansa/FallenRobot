@@ -57,4 +57,4 @@ COPY ./FallenRobot/config.py /root/FallenRobot/FallenRobot/
 # EXPOSE 8080
 
 # Command to run your application (update as needed)
-CMD ["python3","-m","FallenRobot"]
+CMD ["python3", "FallenRobot/main.py"]  # Replace 'main.py' with your actual entry script
