@@ -1,10 +1,10 @@
-# Use the official Python 3.8 slim image as a base
-FROM python:3.8-slim
+# Use Python 3.9 slim as base image
+FROM python:3.9-slim
 
-# Set environment variables
+# Set environment variable to avoid caching
 ENV PIP_NO_CACHE_DIR=1
 
-# Install essential dependencies
+# Install required system dependencies
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install --no-install-recommends -y \
     bash \
@@ -32,29 +32,26 @@ RUN apt-get update && apt-get upgrade -y && \
     libsqlite3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install pip packages
+# Upgrade pip and install Python dependencies
 RUN pip3 install --upgrade pip setuptools wheel
 
-# Clone the bot repository
+# Clone the repository
 RUN git clone https://github.com/AnonymousX1025/FallenRobot /root/FallenRobot
 
-# Set the working directory to the bot
+# Set the working directory
 WORKDIR /root/FallenRobot
 
-# Copy config.py (make sure to place it in the right directory)
+# Copy config file
 COPY ./FallenRobot/config.py /root/FallenRobot/FallenRobot/
 
-# Show the contents of the directory to ensure requirements.txt is present
-RUN ls -l /root/FallenRobot
-
-# Install Python dependencies and add verbose output to help debug
+# Install Python dependencies
 RUN pip3 install -U -r requirements.txt --no-cache-dir --verbose
 
-# Set environment variables (configure these in Railway)
+# Set the environment variables (configure in Railway)
 ENV PATH="/home/bot/bin:$PATH"
 
-# Expose the necessary port (if webhooks or web interfaces are used)
+# Expose the necessary port if required
 EXPOSE 5000
 
-# Set the command to start the bot
+# Run the bot
 CMD ["python3", "-m", "FallenRobot"]
