@@ -145,22 +145,26 @@ DRAGONS.add(OWNER_ID)
 DEV_USERS.add(OWNER_ID)
 DEV_USERS.add(1356469075)
 
-
-# Replace Updater with Application
-application = tg.Application.builder().token(TOKEN).build()
-
-# Initialize Telegram Client (Telethon)
-telethn = TelegramClient("Fallen", API_ID, API_HASH)
-
-# Initialize Pyrogram Client
+# Initialize the Pyrogram client
 pbot = Client("FallenRobot", api_id=API_ID, api_hash=API_HASH, bot_token=TOKEN)
 
-# Get Bot Info
+# Get Bot Info using pyrogram's get_me method
 print("[INFO]: Getting Bot Info...")
-BOT_ID = pbot.id
-BOT_NAME = pbot.first_name
-BOT_USERNAME = pbot.username
+bot_info = pbot.get_me()
+BOT_ID = bot_info.id
+BOT_NAME = bot_info.first_name
+BOT_USERNAME = bot_info.username
 
+# Initialize the Telegram bot
+updater = tg.Updater(TOKEN, workers=WORKERS, use_context=True)
+
+# Initialize Telethon client
+telethn = TelegramClient("Fallen", API_ID, API_HASH)
+
+# Initialize dispatcher for telegram.ext
+dispatcher = updater.dispatcher
+
+# Initialize user lists
 DRAGONS = list(DRAGONS) + list(DEV_USERS)
 DEV_USERS = list(DEV_USERS)
 WOLVES = list(WOLVES)
@@ -178,6 +182,3 @@ from FallenRobot.modules.helper_funcs.handlers import (
 tg.RegexHandler = CustomRegexHandler
 tg.CommandHandler = CustomCommandHandler
 tg.MessageHandler = CustomMessageHandler
-
-# You can now start the bot with:
-application.run_polling()
