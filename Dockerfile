@@ -1,5 +1,5 @@
 # Use Python 3.9 slim as base image
-FROM python:3.9-slim
+FROM python:3.10-slim
 
 # Set environment variable to avoid caching
 ENV PIP_NO_CACHE_DIR=1
