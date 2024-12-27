@@ -1,80 +1,57 @@
-# We're using Debian Slim Buster image
-FROM python:3.8.5-slim-buster
+# Use the official Python 3.8 slim image as a base
+FROM python:3.8-slim
 
-ENV PIP_NO_CACHE_DIR 1
+# Set environment variables
+ENV PIP_NO_CACHE_DIR=1
 
-RUN sed -i.bak 's/us-west-2\.ec2\.//' /etc/apt/sources.list
-
-# Installing Required Packages
-RUN apt update && apt upgrade -y && \
-    apt install --no-install-recommends -y \
-    debian-keyring \
-    debian-archive-keyring \
+# Install essential dependencies
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install --no-install-recommends -y \
     bash \
-    bzip2 \
     curl \
-    figlet \
     git \
-    util-linux \
     libffi-dev \
     libjpeg-dev \
     libjpeg62-turbo-dev \
     libwebp-dev \
-    linux-headers-amd64 \
-    musl-dev \
-    musl \
-    neofetch \
-    php-pgsql \
-    python3-lxml \
-    postgresql \
-    postgresql-client \
-    python3-psycopg2 \
     libpq-dev \
-    libcurl4-openssl-dev \
-    libxml2-dev \
-    libxslt1-dev \
+    python3-lxml \
+    python3-psycopg2 \
     python3-pip \
     python3-requests \
     python3-sqlalchemy \
     python3-tz \
     python3-aiohttp \
-    openssl \
-    pv \
-    jq \
-    wget \
-    python3 \
-    python3-dev \
-    libreadline-dev \
-    libyaml-dev \
-    gcc \
-    sqlite3 \
-    libsqlite3-dev \
-    sudo \
-    zlib1g \
+    postgresql \
+    postgresql-client \
     ffmpeg \
+    zlib1g \
     libssl-dev \
     libgconf-2-4 \
     libxi6 \
-    xvfb \
-    unzip \
-    libopus0 \
-    libopus-dev \
-    && rm -rf /var/lib/apt/lists /var/cache/apt/archives /tmp
+    libsqlite3-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-# Pypi package Repo upgrade
-RUN pip3 install --upgrade pip setuptools
+# Install pip packages
+RUN pip3 install --upgrade pip setuptools wheel
 
-# Copy Python Requirements to /root/FallenRobot
+# Clone the bot repository
 RUN git clone https://github.com/AnonymousX1025/FallenRobot /root/FallenRobot
+
+# Set the working directory to the bot
 WORKDIR /root/FallenRobot
 
-#Copy config file to /root/FallenRobot/FallenRobot
-COPY ./FallenRobot/config.py ./FallenRobot/config.py* /root/FallenRobot/FallenRobot/
+# Copy config.py (make sure to place it in the right directory)
+COPY ./FallenRobot/config.py /root/FallenRobot/FallenRobot/
 
-ENV PATH="/home/bot/bin:$PATH"
-
-# Install requirements
+# Install Python dependencies
 RUN pip3 install -U -r requirements.txt
 
-# Starting Worker
-CMD ["python3","-m","FallenRobot"]
+# Set environment variables (configure these in Railway)
+ENV PATH="/home/bot/bin:$PATH"
+
+# Expose the necessary port (if webhooks or web interfaces are used)
+EXPOSE 5000
+
+# Set the command to start the bot
+CMD ["python3", "-m", "FallenRobot"]
