@@ -44,8 +44,11 @@ WORKDIR /root/FallenRobot
 # Copy config.py (make sure to place it in the right directory)
 COPY ./FallenRobot/config.py /root/FallenRobot/FallenRobot/
 
-# Install Python dependencies
-RUN pip3 install -U -r requirements.txt
+# Show the contents of the directory to ensure requirements.txt is present
+RUN ls -l /root/FallenRobot
+
+# Install Python dependencies and add verbose output to help debug
+RUN pip3 install -U -r requirements.txt --no-cache-dir --verbose
 
 # Set environment variables (configure these in Railway)
 ENV PATH="/home/bot/bin:$PATH"
